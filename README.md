@@ -1,15 +1,7 @@
 # badge
 
-> a GitHub App built with [probot](https://github.com/probot/probot) that 
+> a GitHub App built with [probot](https://github.com/probot/probot) that automatically invites anyone who has their pull request merged to the organization of your repository.
 
-## Setup
+## Usage
 
-```
-# Install dependencies
-npm install
 
-# Run the bot
-npm start
-```
-
-See [docs/deploy.md](docs/deploy.md) if you would like to run your own instance of this app.
