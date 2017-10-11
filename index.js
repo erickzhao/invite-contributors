@@ -1,3 +1,7 @@
+// use sentry.io for exception tracking
+var Raven = require('raven');
+Raven.config(`https://${process.env.SENTRY_KEY}@sentry.io/228941`).install();
+
 module.exports = (robot) => {
   console.log('App started...')
 
