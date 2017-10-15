@@ -1,6 +1,8 @@
-// use sentry.io for exception tracking
-var Raven = require('raven')
-Raven.config(`https://${process.env.SENTRY_KEY}@sentry.io/228941`).install()
+// use Sentry for exception tracking (only on production)
+if (process.env.NODE_ENV === 'production') {
+  var Raven = require('raven')
+  Raven.config(`https://${process.env.SENTRY_KEY}@sentry.io/228941`).install()
+}
 
 module.exports = (robot) => {
   robot.on('pull_request.closed', inviteMember)
@@ -29,6 +31,7 @@ module.exports = (robot) => {
     } catch (e) {
       // if user is not part of org, invite them
       await context.github.orgs.addOrgMembership(payload)
+      robot.log(`${payload.username} has been invited to ${payload.org}!`)
     }
   }
 }
