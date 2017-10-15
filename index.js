@@ -30,6 +30,5 @@ module.exports = (robot) => {
       // if user is not part of org, invite them
       await context.github.orgs.addOrgMembership(payload)
     }
-
   }
 }
