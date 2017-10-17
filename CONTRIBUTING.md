@@ -1,0 +1,1 @@
+Anyone can contribute to Badge with [issues](https://github.com/erickzhao/badge/issues) and [PRs](https://github.com/erickzhao/badge/pulls). If you're submitting a pull request, always create a new branch to work your changes, and try squashing commits down if possible. Always test any new code and make sure `npm test` passes before opening a PR.
