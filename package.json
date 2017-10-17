@@ -10,7 +10,7 @@
     "test": "mocha && standard"
   },
   "dependencies": {
-    "probot": "^0.7.2",
+    "probot": "^0.8.0",
     "raven": "^2.2.1"
   },
   "devDependencies": {
@@ -24,6 +24,8 @@
     "npm": ">= 4.0.0"
   },
   "standard": {
-    "env": [ "mocha" ]
+    "env": [
+      "mocha"
+    ]
   }
 }
