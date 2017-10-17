@@ -1,7 +1,3 @@
-var sentry = require('./lib/sentry.js')
-
-sentry.install()
-
 module.exports = (robot) => {
   robot.on('pull_request.closed', inviteMember)
 
