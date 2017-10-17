@@ -15,16 +15,16 @@ module.exports = (robot) => {
     }
 
     // Get user settings
-    let team
+    let teamId
     try {
-      team = (await context.config('badge.yml')).team
+      const team = (await context.config('badge.yml')).team
+      teamId = await findTeamId(context, context.payload.repository.owner.login, team)
     } catch (e) {
-      team = null
+      teamId = undefined
     }
 
     // Invite to team. If no team defined, invite to organization.
-    if (team) {
-      const teamId = await findTeamId(context, context.payload.repository.owner.login, team)
+    if (teamId) {
       await inviteToTeam(context, teamId, context.payload.pull_request.user.login)
     } else {
       await inviteToOrg(context, context.payload.repository.owner.login, context.payload.pull_request.user.login)
