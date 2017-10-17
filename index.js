@@ -1,8 +1,6 @@
-// use Sentry for exception tracking (only on production)
-if (process.env.NODE_ENV === 'production') {
-  var Raven = require('raven')
-  Raven.config(`https://${process.env.SENTRY_KEY}@sentry.io/228941`).install()
-}
+var sentry = require('./lib/sentry.js')
+
+sentry.install()
 
 module.exports = (robot) => {
   robot.on('pull_request.closed', inviteMember)
@@ -11,14 +9,39 @@ module.exports = (robot) => {
     const isMerged = context.payload.pull_request.merged
     const isOrg = context.payload.repository.owner.type === 'Organization'
 
+    // Terminate if we can't invite user to organization
     if (context.isBot || !isMerged || !isOrg) {
-      robot.log('This pull request belongs to a non-organization repo, has made by a bot user, or has been closed without merging. :(')
       return
     }
 
+    // Get user settings
+    let team
+    try {
+      team = (await context.config('badge.yml')).team
+    } catch (e) {
+      team = null
+    }
+
+    // Invite to team. If no team defined, invite to organization.
+    if (team) {
+      const teamId = await findTeamId(context, context.payload.repository.owner.login, team)
+      await inviteToTeam(context, teamId, context.payload.pull_request.user.login)
+    } else {
+      await inviteToOrg(context, context.payload.repository.owner.login, context.payload.pull_request.user.login)
+    }
+  }
+
+  async function findTeamId (context, org, teamName) {
+    // get all pages from paginated api call and flatten data
+    const teams = (await context.github.orgs.getTeams({org: org})).data
+    const team = teams.find(t => t.name === teamName || t.slug === teamName)
+    return team && team.id
+  }
+
+  async function inviteToOrg (context, org, username) {
     const payload = {
-      org: context.payload.repository.owner.login,
-      username: context.payload.pull_request.user.login,
+      org: org,
+      username: username,
       role: 'member'
     }
 
@@ -32,6 +55,26 @@ module.exports = (robot) => {
       // if user is not part of org, invite them
       await context.github.orgs.addOrgMembership(payload)
       robot.log(`${payload.username} has been invited to ${payload.org}!`)
+    }
+  }
+
+  async function inviteToTeam (context, teamId, username) {
+    const payload = {
+      id: teamId,
+      username: username,
+      role: 'member'
+    }
+
+    // check if user is already part of team
+    // the api call throws if user is not part of team
+    try {
+      await context.github.orgs.getTeamMembership(payload)
+      robot.log(`Cannot invite ${payload.username} because they already a part of the team!`)
+      return
+    } catch (e) {
+      // if user is not part of team, invite them
+      await context.github.orgs.addTeamMembership(payload)
+      robot.log(`${payload.username} has been invited to the team!`)
     }
   }
 }
