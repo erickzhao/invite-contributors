@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2017-10-19
+### Changed
+- Change name from `badge` to `invite-contributors` for clarity. **NOTE: This breaks previous installations that had a `badge.yml` because name has been changed to `invite-contributors.yml`**
+- Change behavior when contributor is already part of organization and bot is set to invite users to teams. Now takes no action instead of inviting user if they were not part of team.
+
 ## [1.1.0] - 2017-10-16
 ### Added
 - Add error tracking with Sentry.io.

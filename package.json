@@ -1,16 +1,16 @@
 {
-  "name": "badge",
-  "version": "1.1.0",
+  "name": "invite-contributors",
+  "version": "1.1.1",
   "description": "",
-  "author": "Erick Zhao <erick@hotmail.ca> (http://erickzhao.github.io/badge)",
+  "author": "Erick Zhao <erick@hotmail.ca>",
   "license": "ISC",
-  "repository": "https://github.com/erickzhao/badge.git",
+  "repository": "https://github.com/erickzhao/invite-contributors.git",
   "scripts": {
     "start": "probot run ./index.js",
     "test": "mocha && standard"
   },
   "dependencies": {
-    "probot": "^0.8.0"
+    "probot": "^3.0.0"
   },
   "devDependencies": {
     "expect": "^1.20.2",

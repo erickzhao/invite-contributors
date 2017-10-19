@@ -13,7 +13,7 @@ module.exports = (robot) => {
     // Get user settings
     let teamId
     try {
-      const team = (await context.config('badge.yml')).team
+      const team = (await context.config('invite-contributors.yml')).team
       teamId = await findTeamId(context, context.payload.repository.owner.login, team)
     } catch (e) {
       teamId = undefined
@@ -64,8 +64,8 @@ module.exports = (robot) => {
     // check if user is already part of team
     // the api call throws if user is not part of team
     try {
-      await context.github.orgs.getTeamMembership(payload)
-      robot.log(`Cannot invite ${payload.username} because they already a part of the team!`)
+      await context.github.orgs.getOrgMembership(payload)
+      robot.log(`Cannot invite ${payload.username} because they already been invited to ${payload.org}!`)
       return
     } catch (e) {
       // if user is not part of team, invite them
