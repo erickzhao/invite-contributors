@@ -2,6 +2,8 @@
 
 [![Build Status](https://api.travis-ci.org/erickzhao/invite-contributors.svg?branch=master)](https://travis-ci.org/erickzhao/invite-contributors)
 
+[![codecov](https://codecov.io/gh/erickzhao/invite-contributors/branch/master/graph/badge.svg)](https://codecov.io/gh/erickzhao/invite-contributors)
+
 **invite-contributors** is a GitHub App built with [probot](https://github.com/probot/probot) that automatically invites new contributors to your repository's organization once they get a Pull Request merged.
 
 ## Usage
