@@ -11,3 +11,6 @@ deploy:
   app: vast-stream-78160
   on:
     repo: erickzhao/invite-contributors
+script:
+- npm run test
+- npm run report-coverage
