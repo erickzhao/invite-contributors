@@ -11,19 +11,19 @@ module.exports = (robot) => {
     }
 
     // Get user settings
-    let teamId
+    let config
     try {
-      const team = (await context.config('invite-contributors.yml')).team
-      teamId = await findTeamId(context, context.payload.repository.owner.login, team)
+      config = (await context.config('invite-contributors.yml'))
+      config.teamId = await findTeamId(context, context.payload.repository.owner.login, config.team)
     } catch (e) {
-      teamId = undefined
+      // no config detected or teamId not found
     }
 
     // Invite to team. If no team defined, invite to organization.
-    if (teamId) {
-      await inviteToTeam(context, teamId, context.payload.pull_request.user.login)
+    if (config && config.teamId) {
+      await inviteToTeam(context, config)
     } else {
-      await inviteToOrg(context, context.payload.repository.owner.login, context.payload.pull_request.user.login)
+      await inviteToOrg(context)
     }
   }
 
@@ -34,10 +34,10 @@ module.exports = (robot) => {
     return team && team.id
   }
 
-  async function inviteToOrg (context, org, username) {
+  async function inviteToOrg (context) {
     const payload = {
-      org: org,
-      username: username,
+      org: context.payload.repository.owner.login,
+      username: context.payload.pull_request.user.login,
       role: 'member'
     }
 
@@ -54,23 +54,28 @@ module.exports = (robot) => {
     }
   }
 
-  async function inviteToTeam (context, teamId, username) {
-    const payload = {
-      id: teamId,
-      username: username,
+  async function inviteToTeam (context, config) {
+    const orgPayload = {
+      org: context.payload.repository.owner.login,
+      username: context.payload.pull_request.user.login,
+      role: 'member'
+    }
+    const teamPayload = {
+      id: config.teamId,
+      username: context.payload.pull_request.user.login,
       role: 'member'
     }
 
     // check if user is already part of team
     // the api call throws if user is not part of team
     try {
-      await context.github.orgs.getOrgMembership(payload)
-      robot.log(`Cannot invite ${payload.username} because they already been invited to ${payload.org}!`)
+      await context.github.orgs.getOrgMembership(orgPayload)
+      robot.log(`Cannot invite ${orgPayload.username} to team #${teamPayload.id} because they already been invited to ${orgPayload.org}!`)
       return
     } catch (e) {
-      // if user is not part of team, invite them
-      await context.github.orgs.addTeamMembership(payload)
-      robot.log(`${payload.username} has been invited to the team!`)
+      // if user is not part of org, invite them
+      await context.github.orgs.addTeamMembership(teamPayload)
+      robot.log(`${teamPayload.username} has been invited to team#${teamPayload.id} in ${orgPayload.org}!`)
     }
   }
 }
