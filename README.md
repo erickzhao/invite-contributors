@@ -11,7 +11,7 @@
 3. If you want to add new contributors to a specific team in your organization, add a `.github/invite-contributors.yml` file into your repository such as below. Note that entering the team name and team slug are both valid formats.
 ```
 # team name
-MY TEAM NAME
+team: MY TEAM NAME
 ```
 
 ## Contributing
