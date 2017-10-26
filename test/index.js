@@ -41,7 +41,7 @@ describe('invite-contributors', () => {
     robot.auth = () => Promise.resolve(github)
   })
 
-  describe('when PR is merged', () => {
+  describe('when PR authored by user is merged', () => {
     // declare fixtures
     const event = require('./fixtures/merge_pr.json')
 
@@ -177,6 +177,18 @@ describe('invite-contributors', () => {
     })
   })
 
+  describe('when PR authored by bot is merged', () => {
+    const event = require('./fixtures/merge_bot.json')
+    it('takes no action', async () => {
+      // act
+      await robot.receive(event)
+
+      // assert
+      expect(github.repos.getContent).toNotHaveBeenCalled()
+      expect(github.orgs.getOrgMembership).toNotHaveBeenCalled()
+    })
+  })
+
   describe('when PR is closed w/o merging', () => {
     const event = require('./fixtures/close_pr.json')
     it('takes no action', async () => {
@@ -184,6 +196,7 @@ describe('invite-contributors', () => {
       await robot.receive(event)
 
       // assert
+      expect(github.repos.getContent).toNotHaveBeenCalled()
       expect(github.orgs.getOrgMembership).toNotHaveBeenCalled()
     })
   })

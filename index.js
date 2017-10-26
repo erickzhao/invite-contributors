@@ -2,11 +2,12 @@ module.exports = (robot) => {
   robot.on('pull_request.closed', inviteMember)
 
   async function inviteMember (context) {
+    const isUser = context.payload.pull_request.user.type === 'User'
     const isMerged = context.payload.pull_request.merged
     const isOrg = context.payload.repository.owner.type === 'Organization'
 
     // Terminate if we can't invite user to organization
-    if (context.isBot || !isMerged || !isOrg) {
+    if (!isUser || !isMerged || !isOrg) {
       return
     }
 

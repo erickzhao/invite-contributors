@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2017-10-25
+### Fixed
+- Correct the behavior of blocking bot events. Used to check for PRs merged by bots, but now instead checks for PRs authored by bots
+
 ## [1.2.1] - 2017-10-21
 ### Fixed
 - Fix the behavior of adding contributor directly to team (it would always add the contributor to team as member regardless of organization membership)
