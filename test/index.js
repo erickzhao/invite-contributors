@@ -77,7 +77,7 @@ describe('invite-contributors', () => {
         expect(github.orgs.addTeamMembership).toNotHaveBeenCalled()
       })
 
-      it('invites new user to organization', async () => {
+      it('invites new user to organization', async() => {
         // act
         await robot.receive(event)
 
@@ -89,7 +89,7 @@ describe('invite-contributors', () => {
       })
     })
 
-    describe('and there is a config', () => {
+    describe('and config specifies team', () => {
       it('terminates if user was already in organization', async() => {
         // arrange
         github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
@@ -107,7 +107,8 @@ describe('invite-contributors', () => {
         expect(github.orgs.addOrgMembership).toNotHaveBeenCalled()
         expect(github.orgs.addTeamMembership).toNotHaveBeenCalled()
       })
-      it('terminates if user in org but valid team name specified', async () => {
+
+      it('terminates if user in org but valid team name specified', async() => {
         // arrange
         github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
           data: {
@@ -123,75 +124,76 @@ describe('invite-contributors', () => {
         expect(github.orgs.getOrgMembership).toHaveBeenCalled()
         expect(github.orgs.addOrgMembership).toHaveBeenCalledWith(orgPayload)
       })
-    })
-    it('invites new user to team if valid team name specified', async () => {
+
+      it('invites new user to team if valid team name specified', async() => {
         // arrange
-      github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
-        data: {
-          content: Buffer.from(`team: Justice League`).toString('base64')
-        }
-      }))
+        github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
+          data: {
+            content: Buffer.from(`team: Justice League`).toString('base64')
+          }
+        }))
 
         // act
-      await robot.receive(event)
+        await robot.receive(event)
 
         // assert
-      expect(github.repos.getContent).toHaveBeenCalledWith(configPayload)
-      expect(github.orgs.getOrgMembership).toThrow()
-      expect(github.orgs.addOrgMembership).toNotHaveBeenCalled()
-      expect(github.orgs.addTeamMembership).toHaveBeenCalledWith(teamPayload)
-    })
+        expect(github.repos.getContent).toHaveBeenCalledWith(configPayload)
+        expect(github.orgs.getOrgMembership).toThrow()
+        expect(github.orgs.addOrgMembership).toNotHaveBeenCalled()
+        expect(github.orgs.addTeamMembership).toHaveBeenCalledWith(teamPayload)
+      })
 
-    it('invites new user to organization if no team specified', async () => {
+      it('invites new user to organization if no team specified', async() => {
         // arrange
-      github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
-        data: {
-          content: Buffer.from(` `).toString('base64')
-        }
-      }))
+        github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
+          data: {
+            content: Buffer.from(` `).toString('base64')
+          }
+        }))
 
         // act
-      await robot.receive(event)
+        await robot.receive(event)
 
         // assert
-      expect(github.repos.getContent).toHaveBeenCalledWith(configPayload)
-      expect(github.orgs.getOrgMembership).toThrow()
-      expect(github.orgs.addOrgMembership).toHaveBeenCalledWith(orgPayload)
-    })
+        expect(github.repos.getContent).toHaveBeenCalledWith(configPayload)
+        expect(github.orgs.getOrgMembership).toThrow()
+        expect(github.orgs.addOrgMembership).toHaveBeenCalledWith(orgPayload)
+      })
 
-    it('invites new user to organization if team name invalid', async () => {
+      it('invites new user to organization if team name invalid', async() => {
         // arrange
-      github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
-        data: {
-          content: Buffer.from(`team: NOT Justice League`).toString('base64')
-        }
-      }))
+        github.repos.getContent = expect.createSpy().andReturn(Promise.resolve({
+          data: {
+            content: Buffer.from(`team: NOT Justice League`).toString('base64')
+          }
+        }))
 
         // act
-      await robot.receive(event)
+        await robot.receive(event)
 
         // assert
-      expect(github.repos.getContent).toHaveBeenCalledWith(configPayload)
-      expect(github.orgs.getOrgMembership).toThrow()
-      expect(github.orgs.addOrgMembership).toHaveBeenCalledWith(orgPayload)
+        expect(github.repos.getContent).toHaveBeenCalledWith(configPayload)
+        expect(github.orgs.getOrgMembership).toThrow()
+        expect(github.orgs.addOrgMembership).toHaveBeenCalledWith(orgPayload)
+      })
     })
-  })
 
-  describe('when PR authored by bot is merged', () => {
-    const event = require('./fixtures/merge_bot.json')
-    it('takes no action', async () => {
-      // act
-      await robot.receive(event)
+    describe('when PR authored by bot is merged', () => {
+      const event = require('./fixtures/merge_bot.json')
+      it('takes no action', async() => {
+        // act
+        await robot.receive(event)
 
-      // assert
-      expect(github.repos.getContent).toNotHaveBeenCalled()
-      expect(github.orgs.getOrgMembership).toNotHaveBeenCalled()
+        // assert
+        expect(github.repos.getContent).toNotHaveBeenCalled()
+        expect(github.orgs.getOrgMembership).toNotHaveBeenCalled()
+      })
     })
   })
 
   describe('when PR is closed w/o merging', () => {
     const event = require('./fixtures/close_pr.json')
-    it('takes no action', async () => {
+    it('takes no action', async() => {
       // act
       await robot.receive(event)
 
