@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2017-10-25
+### Added
+- Enable option in config to add contributors as outside collaborators
+
+### Fixed
+- Make test hierarchy prettier
+
 ## [1.2.2] - 2017-10-25
 ### Fixed
 - Correct the behavior of blocking bot events. Used to check for PRs merged by bots, but now instead checks for PRs authored by bots

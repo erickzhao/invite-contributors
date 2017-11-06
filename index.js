@@ -14,14 +14,16 @@ module.exports = (robot) => {
     // Get user settings
     let config
     try {
+      // attempt to find teamId if team exists
       config = (await context.config('invite-contributors.yml'))
       config.teamId = await findTeamId(context, context.payload.repository.owner.login, config.team)
     } catch (e) {
       // no config detected or teamId not found
     }
-
     // Invite to team. If no team defined, invite to organization.
-    if (config && config.teamId) {
+    if (config && config.isOutside) {
+      await inviteOutsideCollaboratorToRepo(context, config)
+    } else if (config && config.teamId) {
       await inviteToTeam(context, config)
     } else {
       await inviteToOrg(context)
@@ -77,6 +79,29 @@ module.exports = (robot) => {
       // if user is not part of org, invite them
       await context.github.orgs.addTeamMembership(teamPayload)
       robot.log(`${teamPayload.username} has been invited to team#${teamPayload.id} in ${orgPayload.org}!`)
+    }
+  }
+
+  async function inviteOutsideCollaboratorToRepo (context) {
+    const orgPayload = {
+      org: context.payload.repository.owner.login,
+      username: context.payload.pull_request.user.login,
+      role: 'member'
+    }
+    const repoPayload = {
+      owner: context.payload.repository.owner.login,
+      repo: context.payload.repository.name,
+      username: context.payload.pull_request.user.login
+    }
+
+    try {
+      await context.github.orgs.getOrgMembership(orgPayload)
+      robot.log(`Cannot add ${orgPayload.username} as outside collaborator because they already been invited to ${orgPayload.org}!`)
+      return
+    } catch (e) {
+      // if user is not part of org, invite them
+      await context.github.repos.addCollaborator(repoPayload)
+      robot.log(`${repoPayload.username} has been invited to ${repoPayload.repo}!`)
     }
   }
 }
